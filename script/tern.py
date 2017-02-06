@@ -147,6 +147,9 @@ def tern_relativeFile():
     filename = filename.decode(vim.eval('&encoding'))
   return filename[len(tern_projectDir()) + 1:]
 
+def tern_fileModified():
+    return int(vim.eval('&modified'))
+
 def tern_bufferSlice(buf, pos, end):
   text = ""
   while pos < end:
@@ -344,6 +347,8 @@ def tern_lookupDefinition(cmd):
       vim.command("normal! m`")
       vim.command("call cursor(" + str(lnum) + "," + str(col) + ")")
     else:
+      if cmd == "edit" and tern_fileModified():
+          cmd = "split";
       vim.command(cmd + " +call\ cursor(" + str(lnum) + "," + str(col) + ") " +
         tern_projectFilePath(filename).replace(" ", "\\ "))
   elif "url" in data:
